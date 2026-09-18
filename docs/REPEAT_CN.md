@@ -273,7 +273,108 @@ marginal cost of adding a class is one interval set, not another pass over the d
 6. **Calibrate against CHM13**, whose true values for every class in the table are
    known by construction.
 
-## 8. When to use a k-mer backend instead
+## 8. Validating on trios
+
+The 602 complete trios in the 1000 Genomes 30x cohort are not just a sanity check. They
+measure the one thing that is otherwise unmeasurable without an orthogonal assay: **how
+much of your estimate is real.**
+
+### The slope is the reliability
+
+Array copy number is a physical DNA quantity, inherited additively with no dominance and
+no environmental component: a child's diploid CN is one paternal haplotype plus one
+maternal haplotype. So
+
+```
+E[T_child | parents] = (T_father + T_mother) / 2
+```
+
+holds *exactly*, with a coefficient of exactly 1. This is a stronger situation than
+ordinary quantitative genetics, where the midparent slope estimates heritability and a
+slope below 1 is biology. Here a slope below 1 can only be measurement error, and the
+regression of the observed child value on the observed midparent value has expectation
+
+```
+slope = var_true / (var_true + var_err) = reliability
+```
+
+With the observed parental variance `V`, that single regression gives the whole
+decomposition: `var_true = R * V`, `var_err = (1 - R) * V`. `trio_reliability()` returns
+these as true and error CVs.
+
+### What 602 trios can resolve
+
+The standard error of the slope runs from 0.041 to 0.057 across plausible reliabilities,
+so the smallest departure from a perfect assay detectable at two standard errors is
+**R = 0.918** - about an 8% error CV for a class whose biological CV is 25%, like rDNA.
+That is comfortably better than the precision any of these estimates needs.
+
+| true R | implied error CV | SE(slope) | departure from 1 |
+| --- | --- | --- | --- |
+| 0.98 | 3.6% | 0.042 | 0.5 SE |
+| 0.95 | 5.7% | 0.043 | 1.2 SE |
+| 0.90 | 8.3% | 0.045 | 2.2 SE |
+| 0.75 | 14.4% | 0.049 | 5.1 SE |
+| 0.50 | 25.0% | 0.054 | 9.3 SE |
+
+### Run it per class, and it becomes the ripeness test
+
+This is the most useful thing the trios do. Run the regression for every class in the
+target table: a class whose slope is near 1 is being measured well, and a class whose
+slope is near 0 is not being measured at all - its variance is noise. The "ripe" column
+in section 3 is currently an argument from array size and sampling precision; the trios
+turn it into a measurement. Run 5S alongside as the negative control, and expect a
+*high* slope there too, since 5S copy number is as heritable as any other array; 5S is
+a control for association artefacts, not for assay noise.
+
+### The caveat that inverts the answer
+
+Reliability is inflated by measurement error **shared within a family**. If a trio was
+extracted, libraried and sequenced together, part of the error is common to all three,
+it enters the covariance, and the slope rises. Working this through, with a fraction
+*p* of the error variance shared:
+
+```
+slope = (var_true + 2*p*var_err) / (var_true + (1+p)*var_err)
+```
+
+At p = 0 this is the reliability; at p = 1 it is **exactly 1, however bad the assay
+is**. For a genuine 10% error variance, 50% sharing reports R = 0.957 instead of 0.909,
+and full sharing reports 1.000.
+
+1000 Genomes trios were, as a rule, processed together. So the raw number is an upper
+bound, and the informative comparison is before against after `adjust_for_pcs`: if
+reliability falls once coverage PCs are removed, the raw figure was inflated by shared
+batch, and the adjusted one is the honest estimate. `repeatcn.py trios --pcs` prints
+both and flags the drop. A permuted-family null is printed alongside, and should sit at
+zero; if it does not, the estimate carries structure shared across unrelated samples.
+
+```bash
+python analysis/repeatcn.py trios --estimates rDNA45S.cohort.tsv \
+    --pedigree 1kGP.3202_samples.pedigree --pcs ngsPCA/svd.pcs.txt --n-pc 20
+```
+
+Mutation, incidentally, does not bias the slope - it is mean-zero and independent of
+the parents, so it adds variance to the child only and appears as residual in excess of
+the Mendelian prediction. That excess is reported, and for rDNA it is a quantity worth
+looking at in its own right.
+
+### What trios cannot give you
+
+Absolute calibration. The trios validate precision and internal consistency; they say
+nothing about whether your 221-copy estimate is really 221 copies. For scale you need an
+orthogonal measurement: CHM13 itself, where the true value of every class in the table
+is known by construction, and the overlap between this cohort and assembled samples -
+many HPRC genomes are 1000 Genomes samples, so their assemblies give per-class masses
+directly. Note that rDNA specifically collapses in most assemblies, so assembly-derived
+rDNA counts are a weak truth; for rDNA, CHM13 and ddPCR are the calibrators.
+
+Two further things this cohort offers: 26 populations, so ancestry differences in array
+size are measurable but also need genetic PCs included separately from coverage PCs; and
+NGS-PCA already ships a worked 1000G high-coverage example, so the PCs and
+`autosomal.median.txt` for this exact cohort may not need recomputing.
+
+## 9. When to use a k-mer backend instead
 
 Use depth over reference intervals when the class has trustworthy annotation in the
 reference you aligned to. Use k-mer counting when it does not - a class absent from the

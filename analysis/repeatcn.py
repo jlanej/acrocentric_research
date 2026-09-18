@@ -381,6 +381,111 @@ def adjust_for_pcs(values, pcs, n_pc=None, log=True):
     return dict(zip(ids, np.exp(out) if log else out)), r2, X.shape[1] - 1
 
 
+# ------------------------------------------------- validation against trios
+
+def trio_reliability(trios, values, log=True):
+    """Estimate the reliability of a CN measurement from parent-offspring trios.
+
+    Array copy number is a physical DNA quantity, so it is inherited additively with
+    no dominance and no environment: a child's diploid CN is one paternal haplotype
+    plus one maternal haplotype, and therefore
+
+        E[T_child | parents] = (T_father + T_mother) / 2
+
+    holds *exactly*, with a coefficient of exactly 1 - unlike a phenotype, where the
+    midparent slope estimates heritability. Regressing the observed child value on the
+    observed midparent value therefore has expected slope
+
+        slope = var_true / (var_true + var_err) = reliability
+
+    so the departure of the slope from 1 is measurement error, and nothing else. With
+    the observed parental variance V this gives the full decomposition directly:
+    var_true = R * V and var_err = (1 - R) * V.
+
+    Mutation does not bias the slope - it is mean-zero and independent of the parents,
+    so it adds variance to the child only. It appears as residual variance in excess
+    of the model's prediction, which is reported as `excess_resid_cv`.
+
+    **The one thing that breaks this:** measurement error shared within a family. If a
+    trio was extracted, libraried and sequenced together, part of e is common to all
+    three, which enters the numerator and pushes the slope up. With all of the error
+    shared the slope is exactly 1 however bad the assay is. Run this before and after
+    `adjust_for_pcs`; if reliability falls after adjustment, the raw figure was
+    inflated by shared batch. Never report the unadjusted number alone.
+
+    trios: [(father_id, mother_id, child_id)]. values: {sample: estimate}.
+    """
+    import numpy as np
+    f, m, c = [], [], []
+    for fa, mo, ch in trios:
+        if fa in values and mo in values and ch in values:
+            v = [values[fa], values[mo], values[ch]]
+            if log and min(v) <= 0:
+                continue
+            v = [math.log(x) for x in v] if log else v
+            f.append(v[0]); m.append(v[1]); c.append(v[2])
+    n = len(c)
+    if n < 30:
+        raise ValueError("need at least 30 complete trios, got %d" % n)
+    f, m, c = np.array(f), np.array(m), np.array(c)
+    mp = (f + m) / 2.0
+    b, a = np.polyfit(mp, c, 1)
+    resid = c - (a + b * mp)
+    se_b = float(np.sqrt((resid ** 2).sum() / (n - 2) / ((mp - mp.mean()) ** 2).sum()))
+    V = float(np.var(np.concatenate([f, m]), ddof=1))       # observed parental variance
+    R = float(min(max(b, 0.0), 1.0))
+    var_true, var_err = R * V, (1 - R) * V
+    pred_resid = V * (1 - R ** 2 / 2)
+    obs_resid = float(np.var(resid, ddof=2))
+    excess = max(0.0, obs_resid - pred_resid)
+    return dict(n_trios=n, reliability=round(float(b), 4), se=round(se_b, 4),
+                reliability_ci=(round(float(b) - 1.96 * se_b, 4),
+                                round(float(b) + 1.96 * se_b, 4)),
+                total_cv=round(100 * math.sqrt(V), 2),
+                true_cv=round(100 * math.sqrt(var_true), 2),
+                error_cv=round(100 * math.sqrt(max(var_err, 0)), 2),
+                resid_observed=round(obs_resid, 5), resid_predicted=round(pred_resid, 5),
+                excess_resid_cv=round(100 * math.sqrt(excess), 2))
+
+
+def load_trios(path):
+    """Read trios from a PLINK-style .ped/.fam (IID, PAT, MAT in columns 2-4) or a
+    three-column father/mother/child file. Returns [(father, mother, child)]."""
+    trios = []
+    with io.open(path) as fh:
+        for line in fh:
+            if line.startswith("#"):
+                continue
+            p = line.split()
+            if len(p) >= 6 and p[2] not in ("0", "-9", "") and p[3] not in ("0", "-9", ""):
+                trios.append((p[2], p[3], p[1]))          # PAT, MAT, IID
+            elif len(p) == 3 and p[0].lower() not in ("father", "fa", "paternal"):
+                trios.append((p[0], p[1], p[2]))
+    return trios
+
+
+def permuted_trio_null(trios, values, n_perm=200, seed=0, log=True):
+    """Reliability after shuffling children between families: should be ~0.
+
+    A non-zero null means the estimate carries structure shared across unrelated
+    samples - batch, ancestry, or depth - rather than transmitted biology.
+    """
+    import numpy as np
+    rng = np.random.default_rng(seed)
+    kids = [t[2] for t in trios]
+    out = []
+    for _ in range(n_perm):
+        perm = list(kids)
+        rng.shuffle(perm)
+        try:
+            out.append(trio_reliability([(t[0], t[1], k) for t, k in zip(trios, perm)],
+                                        values, log)["reliability"])
+        except ValueError:
+            pass
+    return dict(mean=round(float(np.mean(out)), 4), sd=round(float(np.std(out)), 4),
+                n_perm=len(out))
+
+
 def concordance(subregion_estimates):
     """Coefficient of variation across sub-regions of one class.
 
@@ -535,6 +640,43 @@ def selftest(n=200000, seed=7):
     except ImportError:
         print("[5] coverage-PC adjustment    : skipped (numpy not available)")
 
+    # 6. trio reliability, with and without family-shared error
+    try:
+        import numpy as np
+        rs = np.random.default_rng(seed + 1)
+        nt, s_hap, s_err = 602, 0.18, 0.12
+        R_true = 2 * s_hap ** 2 / (2 * s_hap ** 2 + s_err ** 2)
+        def cohort(shared_frac):
+            vals, trios = {}, []
+            for i in range(nt):
+                hap = rs.normal(0, s_hap, 4)                # fa1 fa2 mo1 mo2
+                T = dict(f=hap[0] + hap[1], m=hap[2] + hap[3],
+                         c=hap[rs.integers(0, 2)] + hap[2 + rs.integers(0, 2)])
+                fam = rs.normal(0, s_err * math.sqrt(shared_frac))
+                ids = {}
+                for who in "fmc":
+                    sid = "t%d_%s" % (i, who)
+                    e = fam + rs.normal(0, s_err * math.sqrt(1 - shared_frac))
+                    vals[sid] = math.exp(T[who] + e)
+                    ids[who] = sid
+                trios.append((ids["f"], ids["m"], ids["c"]))
+            return trios, vals
+        tr0, v0 = cohort(0.0)
+        r0 = trio_reliability(tr0, v0)
+        tr1, v1 = cohort(1.0)
+        r1 = trio_reliability(tr1, v1)
+        null = permuted_trio_null(tr0, v0, n_perm=60, seed=3)
+        p6 = (abs(r0["reliability"] - R_true) < 3 * r0["se"]
+              and r1["reliability"] > R_true + 2 * r1["se"]
+              and abs(null["mean"]) < 0.06)
+        ok &= p6
+        print("[6] trio reliability          : independent error R = %.3f +/- %.3f "
+              "(true %.3f); fully shared error R = %.3f; permuted null %+.3f  %s"
+              % (r0["reliability"], r0["se"], R_true, r1["reliability"],
+                 null["mean"], "OK" if p6 else "FAIL"))
+    except ImportError:
+        print("[6] trio reliability          : skipped (numpy not available)")
+
     print("\n%s" % ("all checks passed" if ok else "FAILURES - see above"))
     return ok
 
@@ -565,6 +707,13 @@ def main(argv=None):
     j.add_argument("--n-pc", type=int, default=None)
     j.add_argument("--no-log", action="store_true")
     j.add_argument("--out", default="-")
+    v = sub.add_parser("trios", help="reliability of an estimate from parent-offspring "
+                                     "trios")
+    v.add_argument("--estimates", required=True, help="TSV: sample<TAB>value, header")
+    v.add_argument("--pedigree", required=True, help=".ped/.fam or father/mother/child")
+    v.add_argument("--pcs", help="NGS-PCA svd.pcs.txt; also reports the adjusted value")
+    v.add_argument("--n-pc", type=int, default=20)
+    v.add_argument("--perm", type=int, default=200)
     sub.add_parser("selftest", help="validate the estimator with simulated counts")
     a = ap.parse_args(argv)
 
@@ -626,6 +775,35 @@ def main(argv=None):
         fh.write("sample\traw\tadjusted\n")
         for s in sorted(adj):
             fh.write("%s\t%g\t%g\n" % (s, vals[s], adj[s]))
+    elif a.cmd == "trios":
+        vals = {}
+        with io.open(a.estimates) as fh:
+            fh.readline()
+            for line in fh:
+                p = line.split()
+                if len(p) >= 2:
+                    vals[p[0]] = float(p[1])
+        trios = load_trios(a.pedigree)
+        raw = trio_reliability(trios, vals)
+        print("complete trios used      : %d of %d in the pedigree"
+              % (raw["n_trios"], len(trios)))
+        print("reliability (raw)        : %.3f +/- %.3f   95%% CI %s"
+              % (raw["reliability"], raw["se"], raw["reliability_ci"]))
+        print("  total / true / error CV: %.1f%% / %.1f%% / %.1f%%"
+              % (raw["total_cv"], raw["true_cv"], raw["error_cv"]))
+        print("  excess residual        : %.1f%% CV beyond the Mendelian prediction"
+              % raw["excess_resid_cv"])
+        if a.pcs:
+            adj, r2, npc = adjust_for_pcs(vals, load_pcs(a.pcs, a.n_pc), n_pc=a.n_pc)
+            adjr = trio_reliability(trios, adj)
+            print("reliability (PC-adjusted): %.3f +/- %.3f   [%d PCs, %.0f%% of "
+                  "variance removed]" % (adjr["reliability"], adjr["se"], npc, 100 * r2))
+            if adjr["reliability"] < raw["reliability"] - 2 * adjr["se"]:
+                print("  NOTE: the raw figure was inflated by error shared within "
+                      "families; report the adjusted one.")
+        null = permuted_trio_null(trios, vals, n_perm=a.perm)
+        print("permuted-family null     : %+.3f +/- %.3f over %d permutations"
+              % (null["mean"], null["sd"], null["n_perm"]))
     elif a.cmd == "selftest":
         sys.exit(0 if selftest() else 1)
 

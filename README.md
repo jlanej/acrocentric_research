@@ -105,6 +105,16 @@ CNV-variable bins that make a mean vary between individuals for non-biological r
 Normalisation divides by that same median before the SVD, so the components describe
 coverage shape and the median sets scale: the two are complementary.
 
+Validation uses parent-offspring trios. Copy number is inherited additively with a
+midparent coefficient of exactly 1, so the midparent-offspring regression slope is the
+reliability of the measurement, and one regression separates true from error variance.
+With the 602 trios in the 1000 Genomes 30x cohort this resolves reliability down to
+0.92. Run per class it is a direct ripeness test - a class whose slope is near zero is
+not being measured. The catch is that error shared within a family inflates the slope,
+to exactly 1.0 if fully shared, so the number is only meaningful alongside its
+PC-adjusted counterpart; `repeatcn.py trios --pcs` reports both and a permuted-family
+null.
+
 `python analysis/repeatcn.py selftest` validates the whole thing on simulated counts,
 with no data required. It checks copy-number recovery, the shared-denominator artefact
 and its removal by a split denominator, GC correction at 58% GC (-72% error to -2%),
