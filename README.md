@@ -99,6 +99,12 @@ PC basis is built from single-copy bins with satellite, segmental duplications a
 mappability excluded, so it is disjoint from every class being measured: the components
 can absorb library and bias structure but cannot absorb the dosage of the target.
 
+The denominator is NGS-PCA's `AUTO_HQ_median` - the per-sample median over the
+retained bins - rather than a genome-wide mean, which would include the duplicated and
+CNV-variable bins that make a mean vary between individuals for non-biological reasons.
+Normalisation divides by that same median before the SVD, so the components describe
+coverage shape and the median sets scale: the two are complementary.
+
 `python analysis/repeatcn.py selftest` validates the whole thing on simulated counts,
 with no data required. It checks copy-number recovery, the shared-denominator artefact
 and its removal by a split denominator, GC correction at 58% GC (-72% error to -2%),

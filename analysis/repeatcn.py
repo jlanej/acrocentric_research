@@ -289,6 +289,52 @@ def coverage_pcs(bin_matrix, n_pc=20):
     return U[:, :k] * S[:k], (S ** 2 / (S ** 2).sum())[:k]
 
 
+def load_auto_hq_median(path, strip_suffix=None):
+    """Read NGS-PCA's autosomal.median.txt -> {sample: (median_depth, n_bins)}.
+
+    Columns are SAMPLE, AUTO_HQ_median, N_BINS. This is the preferred denominator for
+    the estimator: it is the per-sample median depth over exactly the bins the PCA
+    used - autosomal, with the exclusion set (SV blacklist, low mappability, DGV,
+    segmental duplications) removed - so it is a single-copy denominator by
+    construction, and it is already computed, with no extra pass over the data.
+
+    Two things to know. Values are not floored, so a failed or empty sample reads as
+    zero; those are dropped here and returned in the second element. And sample names
+    are the mosdepth file name minus 'regions.bed.gz', which leaves a trailing dot
+    unless the run used -sampleSuffix; pass strip_suffix to match your own ids.
+
+    Returns (kept {sample: (median, n_bins)}, failed [sample, ...]).
+    """
+    kept, failed = {}, []
+    with io.open(path) as fh:
+        head = fh.readline()
+        if "AUTO_HQ_median" not in head:
+            raise ValueError("%s does not look like autosomal.median.txt" % path)
+        for line in fh:
+            p = line.split()
+            if len(p) < 3:
+                continue
+            name, med, nb = p[0], float(p[1]), int(p[2])
+            if strip_suffix and name.endswith(strip_suffix):
+                name = name[: -len(strip_suffix)]
+            (failed.append(name) if med <= 0 else
+             kept.__setitem__(name, (med, nb)))
+    return kept, failed
+
+
+def median_sampling_se(n_bins, bin_cv=0.20):
+    """Relative standard error of the high-quality median, normal approximation.
+
+    Used to check that the denominator's own sampling noise is small enough to ignore
+    when two classes share it (see the induced-correlation formula in the module
+    docstring for `control_depth_from_windows`). At 15,000 retained bins this is about
+    0.2%, which induces a correlation of 5e-5 between two classes - four orders of
+    magnitude below what matters. The residual risk from a shared denominator is
+    therefore systematic, not statistical, which is what the coverage PCs address.
+    """
+    return 1.2533 * bin_cv / math.sqrt(max(1, n_bins))
+
+
 def load_pcs(path, n_pc=None):
     """Read an NGS-PCA svd.pcs.txt (samples in rows, PCs in columns)."""
     pcs = {}
@@ -350,7 +396,7 @@ def concordance(subregion_estimates):
 
 
 def estimate_from_regions(regions_path, targets_path, control_gc=None,
-                          denominator="all"):
+                          denominator="all", control_depth=None):
     """Read mosdepth --by output and a targets table; return per-class estimates.
 
     mosdepth writes <prefix>.regions.bed.gz with columns chrom, start, end, name, mean
@@ -372,10 +418,13 @@ def estimate_from_regions(regions_path, targets_path, control_gc=None,
             s, e, name, dep = int(p[1]), int(p[2]), p[3], float(p[4])
             bases[name] += dep * (e - s)
             span[name] += (e - s)
-    if control_gc is None:
-        raise ValueError("control windows are required; see docs/REPEAT_CN.md")
-    gcf = gc_curve(control_gc)
-    ctrl = control_depth_from_windows(control_gc, denominator)
+    if control_depth is None and control_gc is None:
+        raise ValueError("supply control_depth (NGS-PCA AUTO_HQ_median, preferred) "
+                         "or control windows; see docs/REPEAT_CN.md")
+    # GC correction still needs windows; the scale can come from the median alone
+    gcf = gc_curve(control_gc) if control_gc else (lambda gc: 1.0)
+    ctrl = (control_depth if control_depth is not None
+            else control_depth_from_windows(control_gc, denominator))
     out = []
     for cls, b in sorted(bases.items()):
         r = tgt.get(cls, {})
@@ -502,7 +551,11 @@ def main(argv=None):
     e = sub.add_parser("estimate", help="estimate CN from mosdepth regions")
     e.add_argument("--regions", required=True)
     e.add_argument("--targets", required=True)
-    e.add_argument("--control", required=True, help="TSV of gc<TAB>depth per window")
+    e.add_argument("--auto-hq-median", help="NGS-PCA autosomal.median.txt (preferred "
+                                            "denominator)")
+    e.add_argument("--sample", help="sample id within autosomal.median.txt")
+    e.add_argument("--control", help="TSV of gc<TAB>depth per window; needed for the "
+                                     "GC correction, and as a fallback denominator")
     e.add_argument("--denominator", default="all", choices=["all", "split"])
     e.add_argument("--out", default="-")
     j = sub.add_parser("adjust", help="residualise cohort estimates on coverage PCs")
@@ -523,11 +576,38 @@ def main(argv=None):
                   % (r["cls"], r["quantity"], r["chm13_haploid_Mb"],
                      ("%s copies" % r["implied_haploid_copies"]) if r["unit_bp"] else ""))
     elif a.cmd == "estimate":
-        ctrl = [(float(x[0]), float(x[1])) for x in
-                (l.split() for l in io.open(a.control)) if len(x) >= 2]
-        res = estimate_from_regions(a.regions, a.targets, ctrl, a.denominator)
+        ctrl = None
+        if a.control:
+            ctrl = [(float(x[0]), float(x[1])) for x in
+                    (l.split() for l in io.open(a.control)) if len(x) >= 2]
+        depth = None
+        if a.auto_hq_median:
+            med, failed = load_auto_hq_median(a.auto_hq_median)
+            if not a.sample:
+                ap.error("--auto-hq-median requires --sample")
+            if a.sample in failed:
+                ap.error("sample %s has AUTO_HQ_median 0 - failed or empty" % a.sample)
+            if a.sample not in med:
+                ap.error("sample %s not in %s (%d present; check -sampleSuffix "
+                         "naming)" % (a.sample, a.auto_hq_median, len(med)))
+            depth, nbins = med[a.sample]
+            sys.stderr.write("denominator: AUTO_HQ_median %.3f over %d bins "
+                             "(sampling SE %.3f%%)\n"
+                             % (depth, nbins, 100 * median_sampling_se(nbins)))
+        res = estimate_from_regions(a.regions, a.targets, ctrl, a.denominator, depth)
         fh = sys.stdout if a.out == "-" else io.open(a.out, "w", newline="")
-        w = csv.DictWriter(fh, fieldnames=list(res[0].keys()), delimiter="\t",
+        # classes without a defined unit carry no diploid_copies field, so the
+        # header is the union of keys, not the first row's
+        order, seen = [], set()
+        for r in res:
+            for k in r:
+                if k not in seen:
+                    seen.add(k)
+                    order.append(k)
+        for r in res:
+            for k in order:
+                r.setdefault(k, "")
+        w = csv.DictWriter(fh, fieldnames=order, delimiter="\t",
                             lineterminator="\n")
         w.writeheader()
         w.writerows(res)

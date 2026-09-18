@@ -31,7 +31,29 @@ diploid array mass   M_c  = 2 * B_c / d_ctrl              bp
 diploid copy number  CN_c = 2 * B_c / (d_ctrl * L_unit)   copies
 ```
 
-`d_ctrl` is the GC-corrected depth over single-copy autosomal control windows.
+`d_ctrl` is the single-copy autosomal depth, GC-corrected at the class's GC.
+
+**Use NGS-PCA's `autosomal.median.txt` for it.** That file reports `AUTO_HQ_median`,
+the per-sample median depth over exactly the bins the PCA retained - autosomal, less
+the exclusion set (SV blacklist, 50-mer low mappability, DGV, segmental duplications) -
+together with `N_BINS`. It is a single-copy denominator by construction, since the
+regions that are not reliably single-copy in an individual are precisely the ones
+excluded, and it is already computed as a by-product of the normalisation, with no
+extra pass over the data. A plain genome-wide mean depth is the wrong quantity: it
+includes duplicated, CNV-variable and unmappable bins, so it varies between individuals
+for reasons that have nothing to do with the class being measured.
+
+Three operational notes carried from the NGS-PCA documentation. Values are not floored,
+so a failed or empty sample reads as zero rather than as missing - drop those
+explicitly, as `load_auto_hq_median()` does. The file is only written by a run that
+reads the mosdepth files, not by `-matrix` and not by a run reusing a cached
+`tmp.mat.ser.gz` without `-overwrite`. And sample names are the mosdepth file name
+minus `regions.bed.gz`, which leaves a trailing dot unless the run set `-sampleSuffix`.
+
+The median and the PCs are complementary rather than redundant, and it is worth being
+explicit about why: normalisation divides each sample by this same median before the
+SVD, so the components are invariant to a sample's overall depth scale and describe
+only the *shape* of its coverage. The median sets the scale; the PCs correct the shape.
 
 **k-mer counting uses the same formulae.** A read of length `R` yields `R - k + 1`
 k-mers, so counting in k-mer space multiplies numerator and denominator by the same
@@ -99,11 +121,20 @@ halves of the control windows (`estimate --denominator split`). The rDNA-against
 comparison is the one most exposed to this, because both are conventionally computed as
 ratios to the same nuclear depth.
 
-This is related to, but not the same as, the PC adjustment in (c). Coverage PCs remove
-technical structure of unknown mechanism, and will absorb most of a shared denominator
-effect if that effect is correlated across bins. The split denominator removes one
-known arithmetic term exactly, whether or not it loads on any component. Use both: PCs
-for what you cannot name, the split denominator for the term you can write down.
+**How much of this survives the high-quality median?** The statistical part, none of
+it. The median is taken over the retained bins, so its own sampling noise is set by
+`N_BINS`: at 2.4 million retained 1 kb bins it is 0.016%, and even at 15,000 bins after
+aggressive `-sampleEvery` subsampling it is 0.20%. Feeding those into the formula gives
+induced correlations of 5 x 10<sup>-7</sup> and 5 x 10<sup>-5</sup> - three to four
+orders of magnitude below the 0.0153 that reaches significance at n = 127,000.
+`median_sampling_se()` computes this, and the `estimate` command prints it.
+
+So with a properly built denominator the shared-denominator risk is **systematic, not
+statistical**: what remains is bias that moves the median and the class together, and
+that is exactly what the coverage PCs in (c) are for. The split denominator is then
+belt-and-braces rather than essential - worth keeping for a headline
+class-against-class correlation such as rDNA against mtDNA, and not worth the
+complexity elsewhere.
 
 ### (b) GC bias
 
@@ -176,43 +207,44 @@ barely matter; the denominator, GC and batch decisions are the experiment.
 
 ## 6. Recipe
 
+Two mosdepth passes over each CRAM: one in fixed bins, which yields the denominator,
+the technical covariates and the GC curve at once, and one over the target intervals,
+which yields the numerators.
+
 ```bash
 # 1. targets, once per reference
 python analysis/repeatcn.py targets --annot data --out data
 #    -> data/repeat_cn_targets.bed, data/repeat_cn_targets.tsv
 
-# 2. single-copy control windows, once per reference: 10 kb autosomal windows with
-#    their GC, excluding satellite, segmental duplications and low mappability
-bedtools makewindows -g chm13v2.0.fa.fai -w 10000 \
-  | bedtools intersect -v -a - -b data/repeat_cn_targets.bed chm13v2.0_SD.bed \
-  > control_windows.bed
-bedtools nuc -fi chm13v2.0.fa -bed control_windows.bed | cut -f1-3,5 > control_gc.bed
-
-# 3. depths, per sample - mosdepth does the heavy lifting
-mosdepth --by data/repeat_cn_targets.bed --no-per-base --fast-mode sample sample.cram
-mosdepth --by control_windows.bed        --no-per-base --fast-mode sample.ctrl sample.cram
-
-# 4. join control depth to window GC, then estimate
-paste <(zcat sample.ctrl.regions.bed.gz | cut -f5) <(cut -f4 control_gc.bed) \
-  | awk '{print $2"\t"$1}' > control.tsv
-python analysis/repeatcn.py estimate --regions sample.regions.bed.gz \
-    --targets data/repeat_cn_targets.tsv --control control.tsv --out sample.cn.tsv
-
-# 5. cohort technical covariates, from the same BAMs - one extra mosdepth pass in
-#    fixed bins, then NGS-PCA (https://github.com/jlanej/NGS-PCA)
+# 2. per sample: fixed 1 kb bins, and the target intervals
 mosdepth -n -t 1 --by 1000 --fasta chm13v2.0.fa sample.by1000 sample.cram
+mosdepth --by data/repeat_cn_targets.bed --no-per-base --fast-mode sample sample.cram
+
+# 3. cohort: NGS-PCA over the binned coverage (https://github.com/jlanej/NGS-PCA).
+#    Produces svd.pcs.txt AND autosomal.median.txt in one run.
 apptainer run ngs-pca.sif -input mosdepth_dir/ -outputDir ngsPCA/ \
     -numPC 100 -threads 24 -bedExclude ngs_pca_exclude...bed.gz -iters 10
 
-# 6. residualise the cohort's per-class estimates on those PCs
+# 4. per sample: copy number, denominator taken from the high-quality median
+python analysis/repeatcn.py estimate --regions sample.regions.bed.gz \
+    --targets data/repeat_cn_targets.tsv \
+    --auto-hq-median ngsPCA/autosomal.median.txt --sample sample.cram.by1000. \
+    --out sample.cn.tsv
+
+# 5. cohort: residualise each class on the coverage PCs
 python analysis/repeatcn.py adjust --estimates rDNA45S.cohort.tsv \
     --pcs ngsPCA/svd.pcs.txt --n-pc 20 --out rDNA45S.adjusted.tsv
 ```
 
-Steps 3 and 5 are two mosdepth passes over the same CRAM - one over the target
-intervals, one in fixed bins - so the marginal cost of the covariate layer is small,
-and the PCs are reusable across every class in the table and across other depth-derived
-phenotypes.
+For the GC correction, pass `--control` as well: a two-column table of GC and depth per
+window. The natural source is the bins NGS-PCA retained (`svd.bins.txt`), whose GC is a
+static per-reference annotation computed once with `bedtools nuc`, and whose depths are
+already in the `by1000` output. Without it the estimator still runs, but reports
+uncorrected dosage, which is only safe for classes near the genomic mean GC.
+
+The PCs, the median and the GC curve are all reusable across every class in the table
+and across any other depth-derived phenotype - telomere length included - so the
+marginal cost of adding a class is one interval set, not another pass over the data.
 
 ## 7. Before believing a number
 
@@ -234,7 +266,11 @@ phenotypes.
    parent-offspring pairs are better still: acrocentric arms are transmitted intact
    (report section 23), so a parent and child share array lengths exactly, and any
    discordance beyond the de novo rate is measurement error.
-5. **Calibrate against CHM13**, whose true values for every class in the table are
+5. **Denominator sanity.** Check `N_BINS` in `autosomal.median.txt` is what you
+   expect and constant across samples, and that no retained sample has
+   `AUTO_HQ_median` of zero. A sample whose bin count differs has had different
+   sequence excluded, and its denominator is not comparable.
+6. **Calibrate against CHM13**, whose true values for every class in the table are
    known by construction.
 
 ## 8. When to use a k-mer backend instead
