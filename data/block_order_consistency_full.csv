@@ -1,0 +1,9 @@
+relationship,segment,ped,n_ped,hprc,n_hprc
+β-sat distal to HSat1A,distal,0.9803921568627451,51,0.9941520467836257,171
+β-sat distal to HSat3,distal,0.9615384615384616,52,0.9942196531791907,173
+HSat1A vs HSat3,distal,0.696969696969697,66,0.8033707865168539,178
+HSat1A proximal to HSat3,proximal,1.0,22,0.9953271028037384,214
+HSat1A proximal to β-sat,proximal,,0,1.0,208
+HSat1B vs HSat3,proximal,0.8676470588235294,68,0.8835758835758836,481
+β-sat vs HSat3,proximal,,0,0.8604651162790697,602
+β-sat vs HSat1B,proximal,,0,0.6371490280777538,463

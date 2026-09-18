@@ -1,0 +1,9 @@
+representation,accuracy_pct
+size-weighted n-grams,91.0
+train pedigree -> test HPRC,40.81115335868187
+train HPRC -> test pedigree,23.225806451612904
+"order only, unweighted",84.33333333333334
+"order only, 2+3-grams",85.33333333333334
+composition only,86.33333333333333
+arm length only,29.666666666666668
+chance (largest class),21.504237288135595

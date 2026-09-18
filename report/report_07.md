@@ -1,0 +1,87 @@
+## 25. Methods for the analyses in this report
+
+All quantitative statements about reference content were computed for this report from public T2T-CHM13v2.0 resources. No new sequencing data were generated or used.
+
+**Region definitions.** Each acrocentric short arm was defined as the interval from position 0 to the start of the active α-satellite higher-order-repeat array, identified as the largest suprachromosomal-family-2 "live" HOR run in the CenSat v2.1 annotation: `hor_13_3 (S2C13/21H1L)` at 15,548 kb; `hor_14_3 (S2C14/22H1L)` at 10,092 kb; `hor_15_4 (S2C15H1L)` at 16,679 kb; `hor_21_3 (S2C13/21H1L)` at 10,963 kb; `hor_22_9 (S2C14/22H1L)` at 12,788 kb. GRCh38 comparisons use the cytogenetic p-arm (last p-band end in the UCSC `cytoBand` table) and the UCSC `gap` table for N intervals.
+
+**Composition.** Satellite family composition was computed by merging CenSat v2.1 intervals by family within each arm and summing clipped lengths. Family labels follow the CenSat vocabulary; `ct` intervals (non-satellite "transition" sequence within the annotated region) are reported as non-satellite.
+
+**Segmental duplications.** Cross-arm paralogy was computed from the SEDEF call set distributed for CHM13v2.0 (`chm13v2.0_SD.full.bed`), retaining pairs in which both mates fall inside a short arm as defined above. Identity was taken as `matchB/alnB`. Per-arm coverage was computed by merging query intervals at each identity threshold and clipping to the arm. Note that this call set applies the conventional filter excluding duplications more than 70% satellite, so these figures are a lower bound on total paralogy; the median satellite fraction of the retained acrocentric–acrocentric pairs is 0.26.
+
+**Short-read accessibility.** The T2T-CHM13v2.0 short-read accessibility mask (`combined_mask.bed`) was intersected with arm and compartment intervals. Polarity was confirmed by reproducing the per-chromosome accessible-base counts in the distributed `reference_accessibility_comparison.txt` table. The autosomal reference figure of 86.9% is the sum of accessible bases over the sum of total bases for chr1–chr22 from that table.
+
+**Unique-anchor analysis.** The minimum-unique-*k*-mer-length track `chm13v2.0.mul.bw` gives, for each position, the length of the shortest substring starting there that is unique in the genome. Per-arm ladders (Figure 3a) report the fraction of positions with a value ≤ *L* for a grid of *L*. The euchromatic reference is chr13:40,000,000–60,000,000. Difficulty profiles (Figure 3b) and regime maps (Figure 6) use the median value in 10 kb windows. Regime boundaries are 1 kb and 100 kb.
+
+**rDNA.** Array extents are the CenSat `rDNA` intervals. Modelled unit counts are array length divided by 44,838 bp. The unit feature map (Figure 4a) was parsed from the GenBank record KY962518.1.
+
+**Block order across haplotypes (sections 5.5, Figures 7 and 8a).** Per-haplotype satellite annotations for the 161 CEPH1463 acrocentric arms were taken from the `all_samples_censat.bed` track of the Platinum Pedigree AcroMutRecomb repository [@lin2026]; independent annotations for HPRC release 2 came from the per-haplotype `cenSat.bed` files under `working/HPRC/<sample>/assemblies/release2/annotation/censat/`, with scaffold lengths from the accompanying `.fai` and centromere intervals from `active.centromeres.bed`. HPRC scaffolds were assigned to an acrocentric chromosome by the suprachromosomal-family-2 active HOR family named in the annotation (S2C13/21H1L, S2C14/22H1L, S2C15H1L), disambiguated within a family by scaffold length against the corresponding CHM13 chromosome length, retaining only chromosome-scale scaffolds (within 15% of the expected length) and one scaffold per haplotype and chromosome. Scaffolds whose centromere fell in the distal half were reverse-complemented in coordinate space. The short arm was taken as the interval from the telomere-proximal end to the start of the active array. Annotation intervals were merged into blocks by family, joining intervals of the same family within 50 kb and discarding blocks below 50 kb, and DJ-arm and DJ-flank labels were merged. Order consistency for a pair of families is the fraction of arms in which one family's largest block lies distal to the other's, taken as max(f, 1−f) over arms containing both families, requiring at least six informative arms per pair; reported segment-level values are weighted by the number of informative arms. Analysis was stratified into distal and proximal segments relative to the rDNA array because HSat1A and HSat3 occur on both sides of it.
+
+**Per-compartment mutation rates (section 5.4, Figure 8b–c).** De novo SNV counts per satellite family are those reported by Lin et al.; denominators were computed here. Callable bases per compartment were obtained from the same per-haplotype annotation over the interval from the telomere to the end of the active α-satellite array — the scope of the published mutation analysis — after subtracting the union of Flagger- and NucFreq-flagged intervals distributed with that resource, and excluding gap and telomere labels. The study's callable denominator, 26 haplotype-transmissions × 30.7 Mb, was apportioned across compartments in the resulting proportions; this reproduces the published overall rate (1.29 × 10<super>-7</super> against 1.33 × 10<super>-7</super> reported), which is the check that the apportionment is approximately right. The 12 mutations reported in segmental duplications that are not satellite were assigned to the non-satellite compartment together with the 21 falling outside both annotations. Intervals on per-compartment rates are 95% normal intervals on the Poisson count; the satellite/non-satellite contrast is a binomial test of the observed split against the split expected from callable bases.
+
+**Satellite syntax, the slot grammar and placement (section 22.8, Figures 9–11).** Arms were assembled from two annotation dialects mapped onto one alphabet of satellite families, landmarks, a non-satellite spacer class and a wildcard for satellite whose family the annotation leaves unspecified. Intervals were merged into blocks by family, joining intervals of the same family within 50 kb and discarding blocks below 50 kb. HPRC release 2 arms were taken from per-haplotype CenSat annotations; scaffolds were assigned to an acrocentric chromosome by the suprachromosomal-family-2 active HOR family named in the annotation, disambiguated within a family by scaffold length against the corresponding CHM13 chromosome, restricted to chromosome-scale scaffolds within 15% of the expected length, one per haplotype and chromosome, and reverse-complemented in coordinate space where the centromere fell in the distal half. This yielded 789 arms from 94 individuals; the remaining release 2 haplotypes were excluded because their acrocentrics are not assembled to chromosome scale. Arms were split at the rDNA array and the distal and proximal segments modelled separately. Each model is a left-to-right profile whose slots carry a distribution over families, with fixed-cost slot deletion and block insertion; slot chains were seeded from the group medoid by n-gram cosine similarity and refined by Viterbi EM for up to twelve rounds, with slots seeded on a single-copy landmark held at their seeded distribution. The wildcard emits with probability one from every slot and contributes no emission counts. A family prediction is the slot distribution renormalised over satellite families, reported only when the slot carries at least 0.25 total probability on that alphabet — without that gate a slot dominated by non-satellite sequence still returns its highest-probability satellite family from a vanishing probability. Masked-block recovery masks one block at a time, re-aligns, and compares the prediction with the held-out truth; baselines are the majority family, the modal family of the block's decile of segment position, and the family of the nearest labelled block. Splits are by individual, so no individual contributes to both training and test. Chromosome assignment uses size-weighted counts of ordered block n-grams (orders 1–3, weights the square root of mean block size, L2-normalised) with five-nearest-neighbour classification under cosine distance, and the reported controls vary the weighting and the n-gram orders. Random seed 7 throughout.
+
+**Reproducibility caveat.** Two of these measurements are properties of the reference rather than of human genomes, and are labelled as such throughout: any statistic computed inside the CHM13 rDNA models, and any mappability or accessibility figure, which describes the CHM13 haplotype and not the population.
+
+**Software.** Analyses used Python 3 with NumPy, pandas and Matplotlib, and pyBigWig for track access. Bibliographic metadata were retrieved programmatically and each cited reference verified by title match before inclusion.
+
+## 26. Glossary
+
+| Term | Definition |
+| --- | --- |
+| **ACRO repeat** | satellite family at the subtelomeric distal end of acrocentric short arms; the marker for distal assembly completeness |
+| **ALF record** | array-level feature record; the representation proposed in 22.4 |
+| **α-satellite (aSat)** | 171 bp-monomer satellite; organised into higher-order repeats (HOR) at centromeres, monomeric in pericentromeric transitions |
+| **Assignability** | probability that a read is placed on the correct arm and haplotype in the sample's own genome; distinct from mappability |
+| **β-satellite** | GC-rich ~68 bp-monomer satellite characteristic of acrocentric short arms |
+| **CDR** | centromere dip region; hypomethylated subdomain of the active HOR array marking kinetochore attachment |
+| **CenSat** | the T2T-CHM13 satellite annotation (v2.1 used here) |
+| **Distal / proximal** | positions relative to the rDNA array: distal is telomere-side, proximal is centromere-side |
+| **DJ** | distal junction; ~300 kb conserved segmental duplication immediately distal to the rDNA array, present on all five arms |
+| **HOR** | higher-order repeat; a multi-monomer α-satellite unit, tandemly repeated |
+| **HSat1A/1B, HSat2, HSat3** | human satellite families; HSat1A is AT-rich with a ~42 bp repeat, HSat3 forms classical C-band heterochromatin |
+| **IGS** | intergenic spacer; the 31.5 kb non-transcribed portion of the rDNA unit |
+| **Mappability** | uniqueness of a substring in a given reference assembly |
+| **Morph** | a recurrent rDNA unit haplotype; the natural allele unit for rDNA |
+| **MU track** | minimum-unique-*k*-mer-length track; per-base shortest genome-unique substring length |
+| **NAHR** | non-allelic homologous recombination |
+| **NOR** | nucleolus organizer region; an rDNA array plus junctions, functionally competent to nucleate a nucleolus |
+| **PHR** | pseudo-homologous region; high-identity segment shared between non-homologous acrocentric arms, implicated in ectopic exchange |
+| **PJ** | proximal junction; the segmental duplication flanking rDNA on the centromeric side |
+| **pq-scatig** | scaffolded contig spanning short arm, centromere and ≥1 Mb of uniquely-alignable long arm |
+| **PSV** | paralog-specific variant; a position distinguishing two paralogous copies |
+| **rDNA** | ribosomal DNA; the 45S/47S rRNA gene array (5S rRNA is elsewhere, at 1q42) |
+| **Regime I/II/III** | analysis regimes defined by minimum-unique-anchor length (≤1 kb, 1–100 kb, >100 kb) |
+| **ROB** | Robertsonian translocation; whole-arm fusion of two acrocentric chromosomes |
+| **SAAC** | short arm of an acrocentric chromosome |
+| **SD** | segmental duplication |
+| **SST1 / NBL2** | ~1.4 kb-unit macrosatellite on 13p, 14p and 21p; marks the PHRs and is implicated in ROB formation |
+
+## 27. Resources
+
+**Reference and annotation (T2T-CHM13v2.0).** Available from the Human Pangenomics S3 bucket `s3-us-west-2.amazonaws.com/human-pangenomics/T2T/CHM13/assemblies/annotation/` and mirrored at UCSC as assembly `hs1`:
+
+- `chm13v2.0_censat_v2.1.bed` — satellite annotation
+- `chm13v2.0_SD.bed`, `chm13v2.0_SD.full.bed` — segmental duplications, with identity in the full file
+- `accessibility/combined_mask.bed.gz` and component `mapq_`, `coverage_`, `baseq_` masks — short-read accessibility, with GRCh37/GRCh38 equivalents for comparison
+- `mappability/chm13v2.0.mul.bw`, `.mur.bw` — minimum-unique-*k*-mer-length tracks
+- `chm13v1.1.rdna_model.bed`, `chm13v1.1.rdna_units.bed` — rDNA model intervals (mask these)
+- `chm13v2.0_RepeatMasker_4.1.2p1.bed`, `chm13v2.0_cytobands_allchrs.bed`, `chm13v2.0_telomere.bed`
+- `regulation/`, `nonB/`, `pattern/` — methylation, non-B DNA and microsatellite tracks
+
+**Sequence standards.** GenBank `KY962518.1` — human rDNA complete repeating unit, 44,838 bp. Rotate to begin upstream of the 45S transcription start when using as an alignment target. HSat consensus sequences from the HSat review repository [@altemose2022sat].
+
+**Assemblies and pedigree data.** HPRC and HGSVC assembly releases [@liao2023,@logsdon2025hgsvc]; the CEPH1463 / Platinum Pedigree short-arm assemblies and annotations [@lin2026,@porubsky2025dnm], with code and the per-haplotype satellite annotation track at the AcroMutRecomb repository.
+
+**Per-haplotype satellite annotations, useful and easy to miss.** Two resources make the analyses in sections 5.4 and 5.5 reproducible without assembling anything. The Platinum Pedigree repository publishes `annotation/all_samples_censat.bed` (satellite blocks for all 161 pedigree arms, including DJ, PJ, ACRO and SST1 labels that the standard CenSat vocabulary lacks) together with `annotation/flagger_nucfreq_merged.bed` (the assembly-error exclusion set). HPRC release 2 publishes per-haplotype CenSat annotations at `s3://human-pangenomics/working/HPRC/<sample>/assemblies/release2/annotation/censat/<sample>_hap<N>_hprc_r2_v1.cenSat.bed`, with `active.centromeres.bed` and the assembly `.fai` alongside. Both are small BED files; neither requires downloading an assembly.
+
+**Software.** Verkko2 [@antipov2025verkko2]; hifiasm [@cheng2021hifiasm,@cheng2024hifiasmul]; `ribotin` [@rautiainen2024ribotin]; Merqury [@rhie2020merqury]; NucFreq/NucFlag and Flagger [@vollger2022sd,@liao2023]; ModDotPlot [@sweeten2024moddotplot]; CenMAP and HumAS-HMMER [@altemose2022cen]; SEDEF [@numanagic2018sedef]; minimap2 [@li2018mm2]; wfmash and PGGB [@garrison2024pggb]; Minigraph-Cactus [@hickey2023mc]; odgi [@guarracino2022odgi]; SVbyEye [@porubsky2025svbyeye]; wgatools [@wei2025wgatools]; sniffles2 [@smolka2024]; Truvari [@english2022truvari]; TRGT [@dolzhenko2024trgt]; DeepPolisher [@mastoras2025]; compleasm [@huang2023compleasm]; BEDTools [@quinlan2010].
+
+## 28. A closing assessment
+
+The acrocentric short arms have moved in four years from unsequenced to sequenced, and from unmeasured to partly measured. What has not happened is the corresponding change in analytical practice: the regions remain excluded from essentially every cohort analysis, and the exclusions are usually silent.
+
+Our reading of the numbers assembled here is that the field is at an inflection point with an unusually favourable cost structure. The hardest single obstacle — the rDNA array — accounts for 9.93 Mb, and will need new technology. But it is the *only* compartment that needs new technology: every other satellite family is more than 97% anchorable with reads that many laboratories already generate. The remaining obstacles are infrastructural rather than physical: a coordinate system, an assignability metric, a data model for arrays, and a benchmark. None requires an instrument that does not exist. All four could be built, by a small number of groups, within a couple of years.
+
+One structural finding makes that infrastructural programme easier than it looked. The block order in these arms is conserved — an invariant landmark backbone, a distal satellite order shared by all five chromosomes, and free ordering confined to a few identifiable slots (section 5.5). Almost all of the interindividual difference is length variation within that fixed syntax. A coordinate system and a data model only have to name slots and measure their sizes, which is a far more tractable specification than one that would have to accommodate arbitrary rearrangement.
+
+Meanwhile there is work available at zero marginal sequencing cost. Total rDNA copy number, relative satellite array content and a Robertsonian carrier screen are all computable from short-read data that thousands of cohorts already hold; the rDNA-dosage-as-modifier hypothesis (21.3) and the synapsis-versus-composition test of mutation rate (21.1) are both answerable by re-analysis rather than by new experiments. For a group already holding a trio-based pediatric cohort, the most immediately valuable action is probably the least glamorous: compute the short-arm denominator that has always been implicit, state it, and then look at what falls inside it.

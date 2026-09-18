@@ -1,0 +1,765 @@
+{
+"nurk2022": [
+"Nurk S, Koren S, et al.",
+"The complete sequence of a human genome",
+2022,
+"Science",
+"10.1126/science.abj6987"
+],
+"hoyt2022": [
+"Hoyt SJ, Storer JM, et al.",
+"From telomere to telomere: The transcriptional and epigenetic state of human repeat elements",
+2022,
+"Science",
+"10.1126/science.abk3112"
+],
+"altemose2022cen": [
+"Altemose N, Logsdon GA, et al.",
+"Complete genomic and epigenetic maps of human centromeres",
+2022,
+"Science",
+"10.1126/science.abl4178"
+],
+"vollger2022sd": [
+"Vollger MR, Guitart X, et al.",
+"Segmental duplications and their variation in a complete human genome",
+2022,
+"Science",
+"10.1126/science.abj6965"
+],
+"aganezov2022": [
+"Aganezov S, Yan SM, et al.",
+"A complete reference genome improves analysis of human genetic variation",
+2022,
+"Science",
+"10.1126/science.abl3533"
+],
+"gershman2022": [
+"Gershman A, Sauria ME, et al.",
+"Epigenetic patterns in a complete human genome",
+2022,
+"Science",
+"10.1126/science.abj5089"
+],
+"rhie2023y": [
+"Rhie A, Nurk S, et al.",
+"The complete sequence of a human Y chromosome",
+2023,
+"Nature",
+"10.1038/s41586-023-06457-y"
+],
+"logsdon2024cen": [
+"Logsdon GA, Rozanski AN, et al.",
+"The variation and evolution of complete human centromeres",
+2024,
+"Nature",
+"10.1038/s41586-024-07278-3"
+],
+"liao2023": [
+"Liao W, Asri M, et al.",
+"A draft human pangenome reference",
+2023,
+"Nature",
+"10.1038/s41586-023-05896-x"
+],
+"wang2022hpp": [
+"Wang T, Antonacci-Fulton L, et al.",
+"The Human Pangenome Project: a global resource to map genomic diversity",
+2022,
+"Nature",
+"10.1038/s41586-022-04601-8"
+],
+"logsdon2025hgsvc": [
+"Logsdon GA, Ebert P, et al.",
+"Complex genetic variation in nearly complete human genomes",
+2025,
+"Nature",
+"10.1038/s41586-025-09140-6"
+],
+"porubsky2023gaps": [
+"Porubsky D, Vollger MR, et al.",
+"Gaps and complex structurally variant loci in phased genome assemblies",
+2023,
+"Genome Research",
+"10.1101/gr.277334.122"
+],
+"rautiainen2023verkko": [
+"Rautiainen M, Nurk S, et al.",
+"Telomere-to-telomere assembly of diploid chromosomes with Verkko",
+2023,
+"Nature Biotechnology",
+"10.1038/s41587-023-01662-6"
+],
+"antipov2025verkko2": [
+"Antipov D, Rautiainen M, et al.",
+"Verkko2 integrates proximity-ligation data with long-read De Bruijn graphs for efficient telomere-to-telomere genome assembly, phasing, and scaffolding",
+2025,
+"Genome Research",
+"10.1101/gr.280383.124"
+],
+"cheng2021hifiasm": [
+"Cheng H, Concepcion GT, et al.",
+"Haplotype-resolved de novo assembly using phased assembly graphs with hifiasm",
+2021,
+"Nature Methods",
+"10.1038/s41592-020-01056-5"
+],
+"cheng2024hifiasmul": [
+"Cheng H, Asri M, et al.",
+"Scalable telomere-to-telomere assembly for diploid and polyploid genomes with double graph",
+2024,
+"Nature Methods",
+"10.1038/s41592-024-02269-8"
+],
+"jarvis2022": [
+"Jarvis ED, Formenti G, et al.",
+"Semi-automated assembly of high-quality diploid human reference genomes",
+2022,
+"Nature",
+"10.1038/s41586-022-05325-5"
+],
+"rhie2020merqury": [
+"Rhie A, Walenz BP, et al.",
+"Merqury: reference-free quality, completeness, and phasing assessment for genome assemblies",
+2020,
+"Genome biology",
+"10.1186/s13059-020-02134-9"
+],
+"mccartney2022": [
+"Cartney AMM, Shafin K, et al.",
+"Chasing perfection: validation and polishing strategies for telomere-to-telomere genome assemblies",
+2022,
+"Nature Methods",
+"10.1038/s41592-022-01440-3"
+],
+"miga2020x": [
+"Miga KH, Koren S, et al.",
+"Telomere-to-telomere assembly of a complete human X chromosome",
+2020,
+"Nature",
+"10.1038/s41586-020-2547-7"
+],
+"yoo2025ape": [
+"Yoo D, Rhie A, et al.",
+"Complete sequencing of ape genomes",
+2025,
+"Nature",
+"10.1038/s41586-025-08816-3"
+],
+"garrison2024pggb": [
+"Garrison E, Guarracino A, et al.",
+"Building pangenome graphs",
+2024,
+"Nature Methods",
+"10.1038/s41592-024-02430-3"
+],
+"hickey2023mc": [
+"Hickey G, Monlong J, et al.",
+"Pangenome graph construction from genome alignments with Minigraph-Cactus",
+2023,
+"Nature Biotechnology",
+"10.1038/s41587-023-01793-w"
+],
+"guarracino2022odgi": [
+"Guarracino A, Heumos S, et al.",
+"ODGI: understanding pangenome graphs",
+2022,
+"Bioinformatics",
+"10.1093/bioinformatics/btac308"
+],
+"siren2021giraffe": [
+"Sir\u00e9n J, Monlong J, et al.",
+"Pangenomics enables genotyping of known structural variants in 5202 diverse genomes",
+2021,
+"Science",
+"10.1126/science.abg8871"
+],
+"ebler2022pangenie": [
+"Ebler J, Ebert P, et al.",
+"Pangenome-based genome inference allows efficient and accurate genotyping across a wide spectrum of variant classes",
+2022,
+"Nature Genetics",
+"10.1038/s41588-022-01043-w"
+],
+"li2018mm2": [
+"Li H",
+"Minimap2: pairwise alignment for nucleotide sequences",
+2018,
+"Bioinformatics",
+"10.1093/bioinformatics/bty191"
+],
+"numanagic2018sedef": [
+"Numanagic I, G\u00f6kkaya AS, et al.",
+"Fast characterization of segmental duplications in genome assemblies",
+2018,
+"Bioinformatics",
+"10.1093/bioinformatics/bty586"
+],
+"sweeten2024moddotplot": [
+"Sweeten AP, Schatz MC, et al.",
+"ModDotPlot\u2014rapid and interactive visualization of tandem repeats",
+2024,
+"Bioinformatics",
+"10.1093/bioinformatics/btae493"
+],
+"rautiainen2024ribotin": [
+"Rautiainen M",
+"Ribotin: automated assembly and phasing of rDNA morphs",
+2024,
+"Bioinformatics",
+"10.1093/bioinformatics/btae124"
+],
+"porubsky2025svbyeye": [
+"Porubsky D, Guitart X, et al.",
+"SVbyEye: a visual tool to characterize structural variation among whole-genome assemblies",
+2025,
+"Bioinformatics",
+"10.1093/bioinformatics/btaf332"
+],
+"wei2025wgatools": [
+"Wei W, Gui S, et al.",
+"wgatools : an ultrafast toolkit for manipulating whole-genome alignments",
+2025,
+"Bioinformatics",
+"10.1093/bioinformatics/btaf132"
+],
+"vollger2023sdmut": [
+"Vollger MR, Dishuck PC, et al.",
+"Increased mutation and gene conversion within human segmental duplications",
+2023,
+"Nature",
+"10.1038/s41586-023-05895-y"
+],
+"li2020minigraph": [
+"Li H, Feng X, et al.",
+"The design and construction of reference pangenome graphs with minigraph",
+2020,
+"Genome biology",
+"10.1186/s13059-020-02168-z"
+],
+"guarracino2023": [
+"Guarracino A, Buonaiuto S, et al.",
+"Recombination between heterologous human acrocentric chromosomes",
+2023,
+"Nature",
+"10.1038/s41586-023-05976-y"
+],
+"lin2026": [
+"Lin J, Mastrorosa FK, Noyes MD, et al.",
+"Human acrocentric chromosome short-arm de novo mutation and recombination",
+2026,
+"Cell 189:4876\u20134890.e8",
+"10.1016/j.cell.2026.05.035"
+],
+"delima2025rob": [
+"de Lima LG, Guarracino A, et al.",
+"The formation and propagation of human Robertsonian chromosomes",
+2025,
+"Nature",
+"10.1038/s41586-025-09540-8"
+],
+"antonarakis2022": [
+"Antonarakis SE",
+"Short arms of human acrocentric chromosomes and the completion of the human genome sequence",
+2022,
+"Genome Research",
+"10.1101/gr.275350.121"
+],
+"mcstay2023": [
+"McStay B",
+"The p-Arms of Human Acrocentric Chromosomes Play by a Different Set of Rules",
+2023,
+"Annual Review of Genomics and Human Genetics",
+"10.1146/annurev-genom-101122-081642"
+],
+"floutsakou2013": [
+"Floutsakou I, Agrawal S, et al.",
+"The shared genomic architecture of human nucleolar organizer regions",
+2013,
+"Genome Research",
+"10.1101/gr.157941.113"
+],
+"gerton2024": [
+"Gerton JL",
+"A working model for the formation of Robertsonian chromosomes",
+2024,
+"Journal of Cell Science",
+"10.1242/jcs.261912"
+],
+"mcstay2016": [
+"McStay B",
+"Nucleolar organizer regions: genomic \u2018dark matter\u2019 requiring illumination",
+2016,
+"Genes & Development",
+"10.1101/gad.283838.116"
+],
+"kim2018": [
+"Kim J, Dilthey A, et al.",
+"Variation in human chromosome 21 ribosomal RNA genes characterized by TAR cloning and long-read sequencing",
+2018,
+"Nucleic Acids Research",
+"10.1093/nar/gky442"
+],
+"stults2008": [
+"Stults DM, Killen MW, et al.",
+"Genomic architecture and inheritance of human ribosomal RNA gene clusters",
+2007,
+"Genome Research",
+"10.1101/gr.6858507"
+],
+"stults2009": [
+"Stults DM, Killen MW, et al.",
+"Human rRNA Gene Clusters Are Recombinational Hotspots in Cancer",
+2009,
+"Cancer Research",
+"10.1158/0008-5472.can-09-2680"
+],
+"agrawal2018": [
+"Agrawal S, Ganley ARD",
+"The conservation landscape of the human ribosomal RNA gene repeats",
+2018,
+"PLoS ONE",
+"10.1371/journal.pone.0207531"
+],
+"parks2018": [
+"Parks M, Kurylo CM, et al.",
+"Variant ribosomal RNA alleles are conserved and exhibit tissue-specific expression",
+2018,
+"Science Advances",
+"10.1126/sciadv.aao0665"
+],
+"gibbons2015": [
+"Gibbons JG, Branco AT, et al.",
+"Concerted copy number variation balances ribosomal DNA dosage in human and mouse genomes",
+2015,
+"Proceedings of the National Academy of Sciences",
+"10.1073/pnas.1416878112"
+],
+"gibbons2014": [
+"Gibbons JG, Branco AT, et al.",
+"Ribosomal DNA copy number is coupled with gene expression variation and mitochondrial abundance in humans",
+2014,
+"Nature Communications",
+"10.1038/ncomms5850"
+],
+"xu2017": [
+"Xu B, Li H, et al.",
+"Ribosomal DNA copy number loss and sequence variation in cancer",
+2017,
+"PLoS Genetics",
+"10.1371/journal.pgen.1006771"
+],
+"wang2019rdna": [
+"Wang M, Lemos B",
+"Ribosomal DNA copy number amplification and loss in human cancers is linked to tumor genetic context, nucleolus activity, and proliferation",
+2017,
+"PLoS Genetics",
+"10.1371/journal.pgen.1006994"
+],
+"potapova2019": [
+"Cerqueira AV, Lemos B",
+"Ribosomal DNA and the Nucleolus as Keystones of Nuclear Architecture, Organization, and Function",
+2019,
+"Trends in Genetics",
+"10.1016/j.tig.2019.07.011"
+],
+"potapova2019jcb": [
+"Potapova T, Unruh JR, et al.",
+"Superresolution microscopy reveals linkages between ribosomal DNA on heterologous chromosomes",
+2019,
+"The Journal of Cell Biology",
+"10.1083/jcb.201810166"
+],
+"hori2021": [
+"Hori Y, Shimamoto A, et al.",
+"The human ribosomal DNA array is composed of highly homogenized tandem clusters",
+2021,
+"Genome Research",
+"10.1101/gr.275838.121"
+],
+"salim2019": [
+"Salim D, Gerton JL",
+"Ribosomal DNA instability and genome adaptability",
+2019,
+"Chromosome Research",
+"10.1007/s10577-018-9599-7"
+],
+"choo1988": [
+"Choo KHA, Vissel B, et al.",
+"Homologous alpha satellite sequences on human acrocentric chromosomes with selectivity for chromosomes 13, 14 and 21: implications for recombination between nonhomologues and Robertsonian translocations",
+1988,
+"Nucleic Acids Research",
+"10.1093/nar/16.4.1273"
+],
+"altemose2022sat": [
+"Altemose N",
+"A classical revival: Human satellite DNAs enter the genomics era",
+2022,
+"Seminars in Cell and Developmental Biology",
+"10.1016/j.semcdb.2022.04.012"
+],
+"miga2019": [
+"Miga KH",
+"Centromeric Satellite DNAs: Hidden Sequence Variation in the Human Population",
+2019,
+"Genes",
+"10.3390/genes10050352"
+],
+"talbert2022": [
+"Talbert PB, Henikoff S",
+"The genetics and epigenetics of satellite centromeres",
+2022,
+"Genome Research",
+"10.1101/gr.275351.121"
+],
+"sullivan2020": [
+"Sullivan LL, Sullivan BA",
+"Genomic and functional variation of human centromeres",
+2020,
+"Experimental Cell Research",
+"10.1016/j.yexcr.2020.111896"
+],
+"mastrorosa2025": [
+"Mastrorosa F, Daponte A, et al.",
+"Complete chromosome 21 centromere sequencing of families with Down syndrome reveals centromere size asymmetry",
+2024,
+"bioRxiv (Cold Spring Harbor Laboratory)",
+"10.1101/2024.02.25.581464"
+],
+"gonzalez2021": [
+"Gonz\u00e1lez B, Navarro-Jim\u00e9nez M, et al.",
+"Somatic Hypomethylation of Pericentromeric SST1 Repeats and Tetraploidization in Human Colorectal Cancer Cells",
+2021,
+"Cancers",
+"10.3390/cancers13215353"
+],
+"ting2011": [
+"Ting DT, Lipson D, et al.",
+"Aberrant Overexpression of Satellite Repeats in Pancreatic and Other Epithelial Cancers",
+2011,
+"Science",
+"10.1126/science.1200801"
+],
+"zhu2018": [
+"Zhu Q, Hoong N, et al.",
+"Heterochromatin-Encoded Satellite RNAs Induce Breast Cancer",
+2018,
+"Molecular Cell",
+"10.1016/j.molcel.2018.04.023"
+],
+"bersani2015": [
+"Bersani F, Lee E, et al.",
+"Pericentromeric satellite repeat expansions through RNA-derived DNA intermediates in cancer",
+2015,
+"Proceedings of the National Academy of Sciences",
+"10.1073/pnas.1518008112"
+],
+"nemeth2010": [
+"N\u00e9meth A, Conesa A, et al.",
+"Initial Genomics of the Human Nucleolus",
+2010,
+"PLoS Genetics",
+"10.1371/journal.pgen.1000889"
+],
+"koningsbruggen2010": [
+"Koningsbruggen Sv, Gierlinski M, et al.",
+"High-Resolution Whole-Genome Sequencing Reveals That Specific Chromatin Domains from Most Human Chromosomes Associate with Nucleoli",
+2010,
+"Molecular Biology of the Cell",
+"10.1091/mbc.e10-06-0508"
+],
+"bersaglieri2019": [
+"N\u00e9meth A, L\u00e4ngst G",
+"Genome organization in and around the nucleolus",
+2011,
+"Trends in Genetics",
+"10.1016/j.tig.2011.01.002"
+],
+"grummt2003": [
+"Grummt I",
+"Life on a planet of its own: regulation of RNA polymerase I transcription in the nucleolus",
+2003,
+"Genes & Development",
+"10.1101/gad.1098503r"
+],
+"rubbi2003": [
+"Rubbi CP, Milner J",
+"Disruption of the nucleolus mediates stabilization of p53 in response to DNA damage and other stresses",
+2003,
+"The EMBO Journal",
+"10.1093/emboj/cdg579"
+],
+"narla2010": [
+"Narla A, Ebert BL",
+"Ribosomopathies: human disorders of ribosome dysfunction",
+2010,
+"Blood",
+"10.1182/blood-2009-10-178129"
+],
+"page1997": [
+"Page SL, Shatter LG",
+"Nonhomologous Robertsonian translocations form predominantly during female meiosis",
+1997,
+"Nature Genetics",
+"10.1038/ng0397-231"
+],
+"nielsen1991": [
+"Nielsen J, Wohlert M",
+"Chromosome abnormalities found among 34910 newborn children: results from a 13-year incidence study in yrhus, Denmark",
+1991,
+"Human Genetics",
+"10.1007/bf01213097"
+],
+"shaffer2000": [
+"Shaffer LG, Lupski JR",
+"Molecular mechanisms for constitutional chromosomal rearrangements in humans",
+2000,
+"Annual Review of Genetics",
+"10.1146/annurev.genet.34.1.297"
+],
+"nicholls2001": [
+"Cassidy SB, Dykens EM, et al.",
+"Prader-Willi and Angelman syndromes: Sister imprinted disorders",
+2000,
+"American Journal of Medical Genetics",
+"10.1002/1096-8628(200022)97:2<136::aid-ajmg5>3.0.co;2-v"
+],
+"cheng2009": [
+"Cheng EY, Hunt PA, et al.",
+"Meiotic Recombination in Human Oocytes",
+2009,
+"PLoS Genetics",
+"10.1371/journal.pgen.1000661"
+],
+"brown2005": [
+"Brown P, Judis L, et al.",
+"Meiotic Synapsis Proceeds from a Limited Number of Subtelomeric Sites in the Human Male",
+2005,
+"The American Journal of Human Genetics",
+"10.1086/468188"
+],
+"palsson2025": [
+"P\u00e1lsson G, Hardarson MT, et al.",
+"Complete human recombination maps",
+2025,
+"Nature",
+"10.1038/s41586-024-08450-5"
+],
+"porubsky2025dnm": [
+"Porubsky D, Dashnow H, et al.",
+"Human de novo mutation rates from a four-generation pedigree reference",
+2025,
+"Nature",
+"10.1038/s41586-025-08922-2"
+],
+"noyes2022": [
+"Noyes MD, Harvey WT, et al.",
+"Familial long-read sequencing increases yield of de novo mutations",
+2022,
+"The American Journal of Human Genetics",
+"10.1016/j.ajhg.2022.02.014"
+],
+"altemose2017prdm9": [
+"Altemose N, Noor N, et al.",
+"A map of human PRDM9 binding provides evidence for novel behaviors of PRDM9 and other zinc-finger proteins in meiosis",
+2017,
+"eLife",
+"10.7554/elife.28383"
+],
+"hallast2023": [
+"Hallast P, Ebert P, et al.",
+"Assembly of 43 human Y chromosomes reveals extensive complexity and variation",
+2023,
+"Nature",
+"10.1038/s41586-023-06425-6"
+],
+"porubsky2022inv": [
+"Porubsky D, H\u00f6ps W, et al.",
+"Recurrent inversion polymorphisms in humans associate with genetic instability and genomic disorders",
+2022,
+"Cell",
+"10.1016/j.cell.2022.04.017"
+],
+"olson2023": [
+"Olson ND, Wagner J, et al.",
+"Variant calling and benchmarking in an era of complete human genome sequences",
+2023,
+"Nature Reviews Genetics",
+"10.1038/s41576-023-00590-0"
+],
+"wagner2022cmrg": [
+"Wagner J, Olson ND, et al.",
+"Curated variation benchmarks for challenging medically relevant autosomal genes",
+2022,
+"Nature Biotechnology",
+"10.1038/s41587-021-01158-1"
+],
+"smolka2024": [
+"Smolka M, Paulin LF, et al.",
+"Detection of mosaic and population-level structural variants with Sniffles2",
+2024,
+"Nature Biotechnology",
+"10.1038/s41587-023-02024-y"
+],
+"english2022truvari": [
+"English AC, Menon VK, et al.",
+"Truvari: refined structural variant comparison preserves allelic diversity",
+2022,
+"Genome biology",
+"10.1186/s13059-022-02840-6"
+],
+"rausch2012delly": [
+"Rausch T, Zichner T, et al.",
+"DELLY: structural variant discovery by integrated paired-end and split-read analysis",
+2012,
+"Bioinformatics",
+"10.1093/bioinformatics/bts378"
+],
+"kolmogorov2023": [
+"Kolmogorov M, Billingsley KJ, et al.",
+"Scalable Nanopore sequencing of human genomes provides a comprehensive view of haplotype-resolved variation and methylation",
+2023,
+"Nature Methods",
+"10.1038/s41592-023-01993-x"
+],
+"behera2024dragen": [
+"Behera S, Catreux S, et al.",
+"Comprehensive genome analysis and variant detection at scale using DRAGEN",
+2024,
+"Nature Biotechnology",
+"10.1038/s41587-024-02382-1"
+],
+"dolzhenko2024trgt": [
+"Dolzhenko E, English AC, et al.",
+"Characterization and visualization of tandem repeats at genome scale",
+2024,
+"Nature Biotechnology",
+"10.1038/s41587-023-02057-3"
+],
+"gilpatrick2020": [
+"Gilpatrick T, Lee I, et al.",
+"Targeted nanopore sequencing with Cas9-guided adapter ligation",
+2020,
+"Nature Biotechnology",
+"10.1038/s41587-020-0407-5"
+],
+"stergachis2020": [
+"Stergachis AB, Debo B, et al.",
+"Single-molecule regulatory architectures captured by chromatin fiber sequencing",
+2020,
+"Science",
+"10.1126/science.aaz1646"
+],
+"quinlan2010": [
+"Quinlan AR, Hall IM",
+"BEDTools: a flexible suite of utilities for comparing genomic features",
+2010,
+"Bioinformatics",
+"10.1093/bioinformatics/btq033"
+],
+"benson1999trf": [
+"Benson G",
+"Tandem repeats finder: a program to analyze DNA sequences",
+1999,
+"Nucleic Acids Research",
+"10.1093/nar/27.2.573"
+],
+"morgulis2006": [
+"Morgulis A, Gertz EM, et al.",
+"WindowMasker: window-based masker for sequenced genomes",
+2005,
+"Bioinformatics",
+"10.1093/bioinformatics/bti774"
+],
+"sanders2020": [
+"Sanders AD, Meiers S, et al.",
+"Single-cell analysis of structural variations and complex rearrangements with tri-channel processing",
+2019,
+"Nature Biotechnology",
+"10.1038/s41587-019-0366-x"
+],
+"logsdon2020": [
+"Logsdon GA, Vollger MR, et al.",
+"Long-read human genome sequencing and its applications",
+2020,
+"Nature Reviews Genetics",
+"10.1038/s41576-020-0236-x"
+],
+"mastoras2025": [
+"Mastoras M, Asri M, et al.",
+"Highly accurate assembly polishing with DeepPolisher",
+2025,
+"Genome Research",
+"10.1101/gr.280149.124"
+],
+"huang2023compleasm": [
+"Huang N, Li H",
+"compleasm: a faster and more accurate reimplementation of BUSCO",
+2023,
+"Bioinformatics",
+"10.1093/bioinformatics/btad595"
+],
+"trvar": [
+"Sonay TB, Carvalho T, et al.",
+"Tandem repeat variation in human and great ape populations and its impact on gene expression divergence",
+2015,
+"Genome Research",
+"10.1101/gr.190868.115"
+],
+"cox2015": [
+"Cox DM, Butler MG",
+"The 15q11.2 BP1-BP2 microdeletion syndrome: a review",
+2015,
+"Int. J. Mol. Sci.",
+"10.3390/ijms16024068"
+],
+"bell2020": [
+"Bell AD, Mello CJ, Nemesh J, et al.",
+"Insights into variation in meiosis from 31,228 human sperm genomes",
+2020,
+"Nature",
+"10.1038/s41586-020-2347-0"
+],
+"porubsky2025_22q": [
+"Porubsky D, Yoo D, Dishuck PC, et al.",
+"Population differences of chromosome 22q11.2 duplication structure predispose differentially to microdeletion and inversion",
+2025,
+"bioRxiv",
+"10.1101/2025.07.04.662981"
+],
+"vansluis2019": [
+"van Sluis M, Gail\u00edn M\u00d3, McCarter JGW, et al.",
+"Human NORs, comprising rDNA arrays and functionally conserved distal elements, are located within dynamic chromosomal regions",
+2019,
+"Genes Dev.",
+"10.1101/gad.331892.119"
+],
+"ky962518": [
+"Human ribosomal DNA complete repeating unit",
+"GenBank KY962518.1, 44,838 bp",
+2018,
+"NCBI Nucleotide",
+"KY962518.1"
+],
+"censat": [
+"Human Pangenomics Consortium",
+"T2T-CHM13v2.0 CenSat v2.1 satellite annotation",
+2023,
+"data resource",
+"chm13v2.0_censat_v2.1.bed"
+],
+"accmask": [
+"Human Pangenomics Consortium",
+"T2T-CHM13v2.0 short-read accessibility mask",
+2022,
+"data resource",
+"chm13v2.0 combined_mask.bed"
+],
+"mutrack": [
+"Human Pangenomics Consortium",
+"T2T-CHM13v2.0 minimum-unique-k-mer-length (MU) tracks",
+2022,
+"data resource",
+"chm13v2.0.mul.bw / .mur.bw"
+]
+}

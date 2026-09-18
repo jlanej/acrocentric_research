@@ -1,0 +1,7 @@
+work/
+*.fa
+*.fa.gz
+*.bw
+*.2bit
+__pycache__/
+.DS_Store

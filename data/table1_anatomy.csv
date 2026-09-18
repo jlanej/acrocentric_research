@@ -1,0 +1,14 @@
+Property,13p,15p,22p,21p,14p
+Short arm (Mb),15.55,16.68,12.79,10.96,10.09
+GRCh38 non-N (Mb),1.7,2.0,3.68,5.49,1.18
+rDNA array (Mb),3.58,2.2,0.93,2.5,0.72
+rDNA units (model),80,49,21,56,16
+Dominant satellite,HSat1A 42%,HSat3 52%,β-sat 21%,HSat3 15%,HSat3 19%
+Non-satellite (%),18.8,10.8,28.9,32.6,38.5
+In an SD (%),58.5,41.5,72.1,87.7,95.7
+≥99% twin elsewhere (%),51.9,22.5,22.5,60.5,44.6
+Short-read accessible (%),1.54,7.8,3.19,2.78,5.63
+Unique anchor ≤150 bp (%),15.6,19.0,43.0,29.9,45.4
+Unique anchor ≤10 kb (%),77.5,85.6,93.9,77.9,93.6
+Array-scale only (%),20.6,11.0,4.8,19.9,4.9
+Active α-sat HOR family,S2C13/21H1L,S2C15H1L,S2C14/22H1L,S2C13/21H1L,S2C14/22H1L
