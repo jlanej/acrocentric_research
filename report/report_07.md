@@ -1,4 +1,4 @@
-## 25. Methods for the analyses in this report
+## 26. Methods for the analyses in this report
 
 All quantitative statements about reference content were computed for this report from public T2T-CHM13v2.0 resources. No new sequencing data were generated or used.
 
@@ -20,11 +20,13 @@ All quantitative statements about reference content were computed for this repor
 
 **Satellite syntax, the slot grammar and placement (section 22.8, Figures 9–11).** Arms were assembled from two annotation dialects mapped onto one alphabet of satellite families, landmarks, a non-satellite spacer class and a wildcard for satellite whose family the annotation leaves unspecified. Intervals were merged into blocks by family, joining intervals of the same family within 50 kb and discarding blocks below 50 kb. HPRC release 2 arms were taken from per-haplotype CenSat annotations; scaffolds were assigned to an acrocentric chromosome by the suprachromosomal-family-2 active HOR family named in the annotation, disambiguated within a family by scaffold length against the corresponding CHM13 chromosome, restricted to chromosome-scale scaffolds within 15% of the expected length, one per haplotype and chromosome, and reverse-complemented in coordinate space where the centromere fell in the distal half. This yielded 789 arms from 94 individuals; the remaining release 2 haplotypes were excluded because their acrocentrics are not assembled to chromosome scale. Arms were split at the rDNA array and the distal and proximal segments modelled separately. Each model is a left-to-right profile whose slots carry a distribution over families, with fixed-cost slot deletion and block insertion; slot chains were seeded from the group medoid by n-gram cosine similarity and refined by Viterbi EM for up to twelve rounds, with slots seeded on a single-copy landmark held at their seeded distribution. The wildcard emits with probability one from every slot and contributes no emission counts. A family prediction is the slot distribution renormalised over satellite families, reported only when the slot carries at least 0.25 total probability on that alphabet — without that gate a slot dominated by non-satellite sequence still returns its highest-probability satellite family from a vanishing probability. Masked-block recovery masks one block at a time, re-aligns, and compares the prediction with the held-out truth; baselines are the majority family, the modal family of the block's decile of segment position, and the family of the nearest labelled block. Splits are by individual, so no individual contributes to both training and test. Chromosome assignment uses size-weighted counts of ordered block n-grams (orders 1–3, weights the square root of mean block size, L2-normalised) with five-nearest-neighbour classification under cosine distance, and the reported controls vary the weighting and the n-gram orders. Random seed 7 throughout.
 
+**Transmission of block structure through the pedigree (section 23.2, Figure 12).** Arms were taken from the same pedigree annotation, 156 of them carrying block structure. Each arm was represented proximal-first, since the proximal end is the end that assembles, and pairs were compared by a semi-global alignment with unit mismatch and gap costs and free terminal gaps at the distal end only, requiring at least five blocks aligned. Block-order identity is matched columns over aligned columns; array length ratio is the median of |log2(length ratio)| over matched columns, exponentiated for reporting, computed where at least three columns match. For each of the 70 arms of the eight assembled children of NA12877 and NA12878, the best-scoring candidate was taken separately within each parent - at most two candidates per parent, so the minimum is over equal numbers on both sides - and the parent with the better score was called transmitting. Significance is Wilcoxon signed-rank on the 70 paired values. The unrelated baseline is order-only identity between same-chromosome arms of distinct HPRC individuals, 60 arms sampled per chromosome, 8,793 pairs. Fourth-generation arms were scored against all four great-grandparental candidates; the expectation of one half derives from each fourth-generation individual having one parent absent from the dataset. Ties among the eight third-generation individuals were recorded rather than broken. Code: `analysis/pedigree_transmission.py`.
+
 **Reproducibility caveat.** Two of these measurements are properties of the reference rather than of human genomes, and are labelled as such throughout: any statistic computed inside the CHM13 rDNA models, and any mappability or accessibility figure, which describes the CHM13 haplotype and not the population.
 
 **Software.** Analyses used Python 3 with NumPy, pandas and Matplotlib, and pyBigWig for track access. Bibliographic metadata were retrieved programmatically and each cited reference verified by title match before inclusion.
 
-## 26. Glossary
+## 27. Glossary
 
 | Term | Definition |
 | --- | --- |
@@ -56,7 +58,7 @@ All quantitative statements about reference content were computed for this repor
 | **SD** | segmental duplication |
 | **SST1 / NBL2** | ~1.4 kb-unit macrosatellite on 13p, 14p and 21p; marks the PHRs and is implicated in ROB formation |
 
-## 27. Resources
+## 28. Resources
 
 **Reference and annotation (T2T-CHM13v2.0).** Available from the Human Pangenomics S3 bucket `s3-us-west-2.amazonaws.com/human-pangenomics/T2T/CHM13/assemblies/annotation/` and mirrored at UCSC as assembly `hs1`:
 
@@ -76,7 +78,7 @@ All quantitative statements about reference content were computed for this repor
 
 **Software.** Verkko2 [@antipov2025verkko2]; hifiasm [@cheng2021hifiasm,@cheng2024hifiasmul]; `ribotin` [@rautiainen2024ribotin]; Merqury [@rhie2020merqury]; NucFreq/NucFlag and Flagger [@vollger2022sd,@liao2023]; ModDotPlot [@sweeten2024moddotplot]; CenMAP and HumAS-HMMER [@altemose2022cen]; SEDEF [@numanagic2018sedef]; minimap2 [@li2018mm2]; wfmash and PGGB [@garrison2024pggb]; Minigraph-Cactus [@hickey2023mc]; odgi [@guarracino2022odgi]; SVbyEye [@porubsky2025svbyeye]; wgatools [@wei2025wgatools]; sniffles2 [@smolka2024]; Truvari [@english2022truvari]; TRGT [@dolzhenko2024trgt]; DeepPolisher [@mastoras2025]; compleasm [@huang2023compleasm]; BEDTools [@quinlan2010].
 
-## 28. A closing assessment
+## 29. A closing assessment
 
 The acrocentric short arms have moved in four years from unsequenced to sequenced, and from unmeasured to partly measured. What has not happened is the corresponding change in analytical practice: the regions remain excluded from essentially every cohort analysis, and the exclusions are usually silent.
 

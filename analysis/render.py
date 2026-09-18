@@ -129,8 +129,19 @@ def make_table(rows, widths=None, fontsize=7.5, align=None):
     if widths is None:
         raw = [max(stringWidth(str(rows[ri][ci]) if ci < len(rows[ri]) else "", "Helvetica", fontsize)
                    for ri in range(len(rows))) for ci in range(ncol)]
+        # no column may be narrower than its longest unbreakable word
+        word = [max([stringWidth(w, "Helvetica-Bold", fontsize)
+                     for ri in range(len(rows))
+                     for w in str(rows[ri][ci] if ci < len(rows[ri]) else "").split()] or [0])
+                for ci in range(ncol)]
         tot = sum(raw) or 1
-        widths = [max(0.42 * inch, AVAIL * x / tot) for x in raw]
+        widths = [max(0.42 * inch, word[ci] + 9.0, AVAIL * raw[ci] / tot)
+                  for ci in range(ncol)]
+        s = sum(widths)
+        if s > AVAIL:  # shrink only the columns that have slack above their word floor
+            slack = [w - max(0.42 * inch, word[ci] + 9.0) for ci, w in enumerate(widths)]
+            over, ts = s - AVAIL, sum(slack) or 1
+            widths = [w - over * slack[ci] / ts for ci, w in enumerate(widths)]
         s = sum(widths)
         widths = [w * AVAIL / s for w in widths]
     t = Table(data, colWidths=widths, repeatRows=1, hAlign="LEFT")

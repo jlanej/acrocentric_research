@@ -1,0 +1,17 @@
+{
+ "n_child_arms": 70,
+ "median_order_identity_transmitting": 1.0,
+ "median_order_identity_non_transmitting": 0.8333,
+ "pct_exact_order_transmitting": 58.57,
+ "pct_exact_order_non_transmitting": 10.0,
+ "median_size_divergence_transmitting": 0.0,
+ "median_size_divergence_non_transmitting": 0.3401,
+ "parent_of_origin": {
+  "chromosomes_with_both_haplotypes": 32,
+  "one_of_each": 24,
+  "fraction": 0.75
+ },
+ "n_g4_arms": 46,
+ "pct_g4_matching_G2": 52.17,
+ "median_unrelated_order_identity": 0.85
+}

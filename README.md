@@ -59,6 +59,19 @@ a reproducible slot address and names 88% of them; the ACRO calls are validated 
 block size but not by that test. Six recurrent unspecified-satellite slots are
 catalogued in `data/unknown_slot_summary.csv`.
 
+**Transmission.** The arms do not cross over, so a parent transmits one as a unit.
+Across 70 arms from eight children of a single couple, block order matches the
+transmitting parent exactly in 58.6% of arms (median identity 1.000 vs 0.833 for the
+non-transmitting parent, P = 2e-11) and array lengths match with a median ratio of
+1.00 vs 1.27 (P = 8e-8) - array length being the most variable property of these arms
+between individuals. The non-transmitting parent scores like a stranger (0.833 vs a
+median 0.850 over 8,793 unrelated same-chromosome pairs), and 52% of fourth-generation
+arms trace to the great-grandparental couple against the 50% expected from one
+married-in parent each. A parental arm therefore differs from the child's at the de
+novo rate itself, 1.3e-7/bp - about 7,500-fold closer than a population reference. It
+does not improve short-read mappability, which is set by self-similarity within any
+one genome and is already what the anchor ladder measures.
+
 **What did not work, and matters.** The syntax representation does not transfer
 between annotation pipelines. Against 91.0% within a single pipeline (held-out
 individuals, chance 21.5%), chromosome assignment drops to 40.8% training on the

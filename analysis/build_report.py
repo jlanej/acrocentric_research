@@ -34,7 +34,7 @@ md = re.sub(r"\[@([^\]]+)\]", repl, md)
 if missing: raise SystemExit("MISSING REFERENCE KEYS: %s" % sorted(missing))
 
 # ---- bibliography ------------------------------------------------------
-bib = ["## 29. References", "",
+bib = ["## 30. References", "",
        "References are numbered in order of first appearance. Every entry was verified "
        "against bibliographic metadata retrieved programmatically; data resources are "
        "cited by file name and repository.", ""]
@@ -64,7 +64,7 @@ META = [
  "accessibility mask and the minimum-unique-<i>k</i>-mer-length tracks distributed for "
  "T2T-CHM13v2.0. Methods in section 25; data resources in section 27.",
  "",
- "%d figures, %d tables, %d references." % (11, 8, len(order)),
+ "%d figures, %d tables, %d references." % (12, 8, len(order)),
 ]
 out = render.build("acrocentric_short_arms_report.pdf", TITLE, SUB, META, BLURB, md, figdir=".")
 print("built:", out, os.path.getsize(out), "bytes | refs cited:", len(order))
