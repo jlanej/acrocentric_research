@@ -80,6 +80,31 @@ reverse direction. The two pipelines cut the same sequence into different number
 blocks, so harmonised satellite annotation, or features computed from sequence rather
 than from labels, is a prerequisite for any portable arm-assignment tool.
 
+## Repeat copy number from WGS
+
+`analysis/repeatcn.py` estimates the dosage of multi-copy sequence classes - rDNA 45S
+and 5S, the HSat families, alpha/beta/gamma satellite, SST1, ACRO, telomere, and
+macrosatellites given a panel - from short-read WGS. Dosage is the one measurement
+short reads support well inside these regions, and rDNA copy number has published
+associations with blood cell counts and renal function in UK Biobank.
+
+Depth extraction is delegated to mosdepth; the module owns the parts that are easy to
+get wrong - the estimator, the denominator, GC correction, technical covariates, and
+the controls. Design notes and the class table are in `docs/REPEAT_CN.md`; the target
+table is `data/repeat_cn_targets.tsv`.
+
+Batch is handled by residualising on coverage PCs from
+[NGS-PCA](https://github.com/jlanej/NGS-PCA) rather than on recorded batch labels. The
+PC basis is built from single-copy bins with satellite, segmental duplications and low
+mappability excluded, so it is disjoint from every class being measured: the components
+can absorb library and bias structure but cannot absorb the dosage of the target.
+
+`python analysis/repeatcn.py selftest` validates the whole thing on simulated counts,
+with no data required. It checks copy-number recovery, the shared-denominator artefact
+and its removal by a split denominator, GC correction at 58% GC (-72% error to -2%),
+sub-region concordance, and PC adjustment of a batch-confounded cohort where the raw
+association has the wrong sign (true r = +0.09, raw -0.14, adjusted +0.12).
+
 ## Reproducing
 
 ```sh

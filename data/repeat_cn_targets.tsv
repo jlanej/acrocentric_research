@@ -1,0 +1,19 @@
+cls	quantity	unit_bp	unit_source	chm13_haploid_Mb	implied_haploid_copies	n_arrays	n_chrom	median_array_kb	reads_at_30x	sampling_pct_SE	note
+alphaSat_HOR	copies	171	literature	70.326	411262	120	24	67.6	14065165	0.027	alpha-satellite monomer
+HSat3	megabases		-	69.334		189	17	102.3	13866862	0.027	pentamer-derived, variable HOR
+HSat2	megabases		-	28.706		61	8	19.4	5741139	0.042	pentamer-derived, variable HOR
+HSat1B	megabases		-	15.32		64	8	121.1	3063995	0.057	no stable higher-order unit
+alphaSat_mon	copies	171	literature	13.489	78884	191	23	39.0	2697838	0.061	alpha-satellite monomer
+HSat1A	megabases		-	13.391		24	8	53.0	2678176	0.061	no stable higher-order unit
+rDNA45S	copies	44838	computed	9.928	221	5	5	2201.0	1985616	0.071	KY962518.1 complete repeating unit
+betaSat	copies	68	literature	8.61	126614	184	17	8.9	1721947	0.076	Sau3A/BSR monomer
+LSAU-BSAT	megabases		-	7.036		84	16	2.9	1407216	0.084	composite
+SST1	copies	1400	literature	2.566	1833	68	13	4.4	513203	0.14	NBL2 macrosatellite
+alphaSat_dHOR	copies	171	literature	1.855	10845	103	22	7.5	370911	0.164	alpha-satellite monomer
+ACRO	megabases		-	1.495		30	12	8.5	298918	0.183	acrocentric composite repeat
+gammaSat	copies	220	literature	0.651	2957	64	14	4.1	130118	0.277	gamma-satellite monomer
+rDNA5S	copies	2213	literature	0.385	174	48	13	2.3	76950	0.36	1q42 tandem array unit
+TELO	copies	6	literature	0.347	57847	24	10	16.6	69416	0.38	TTAGGG; prefer the k-mer backend, reference telomeres are not representative of sample length
+D4Z4	copies	3300	literature								4q35 and 10q26 macrosatellite; FSHD locus; not in the CHM13 satellite tracks used here - supply a consensus panel
+DXZ4	copies	3000	literature								Xq23 macrosatellite; not in the CHM13 satellite tracks used here - supply a consensus panel
+mtDNA	copies	16569	computed								NC_012920.1; not in the CHM13 satellite tracks used here - supply a consensus panel
